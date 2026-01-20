@@ -103,7 +103,7 @@
     }
   },
   "outputs_manifest": {
-    "created_at_utc": "2026-01-20T05:28:52.137438+00:00",
+    "created_at_utc": "2026-01-20T10:17:13.041617+00:00",
     "files": [
       {
         "exists": true,
@@ -191,9 +191,9 @@
       },
       {
         "exists": true,
-        "mtime_utc": "2026-01-20T05:20:46.849760+00:00",
+        "mtime_utc": "2026-01-20T10:17:05.809617+00:00",
         "path": "outputs\\fiji_run_h3\\risk_latest_map.html",
-        "sha256": "2ee244a5bc0679e6befcec06c6c588c5408aeeeaab0dd7a9974189a3f519493e",
+        "sha256": "3f45aac91d98b078914c746061bf75a25ce34c4d57f5d01a3fd8f1aeb060e452",
         "size_bytes": 759402
       },
       {
@@ -205,10 +205,10 @@
       },
       {
         "exists": true,
-        "mtime_utc": "2026-01-20T05:21:03.870539+00:00",
+        "mtime_utc": "2026-01-20T10:17:12.171745+00:00",
         "path": "outputs\\fiji_run_h3\\risk_timeslider_map.html",
-        "sha256": "cef8116062452b042e8479b2a29f19de8ac7c1ae2061f777ccdab06b91e1fc98",
-        "size_bytes": 28547770
+        "sha256": "98a4b920fba6377ec47fb120e348e68ef698b45ea3ed6217ab685c3755621de1",
+        "size_bytes": 19123840
       },
       {
         "exists": true,

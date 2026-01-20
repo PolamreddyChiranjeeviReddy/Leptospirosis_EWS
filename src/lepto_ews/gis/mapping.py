@@ -120,22 +120,62 @@ def make_timeslider_map(boundaries: gpd.GeoDataFrame, risk_df: pd.DataFrame, id_
     df = risk_df.copy()
     df["week_start"] = pd.to_datetime(df["week_start"]).dt.normalize()
 
+    # Ensure a single value per (area, week) for clean time animation.
+    # Some pipelines can yield duplicates (e.g., multiple intermediate rows).
+    df["risk_prob"] = pd.to_numeric(df.get("risk_prob"), errors="coerce").clip(0.0, 1.0)
+    if "risk_category" not in df.columns:
+        df["risk_category"] = "unknown"
+
+    def _mode_or_unknown(s: pd.Series) -> str:
+        s2 = s.dropna()
+        if s2.empty:
+            return "unknown"
+        m = s2.mode()
+        return str(m.iloc[0]) if not m.empty else str(s2.iloc[0])
+
+    df = (
+        df.groupby([id_col, "week_start"], as_index=False)
+        .agg(risk_prob=("risk_prob", "mean"), risk_category=("risk_category", _mode_or_unknown))
+        .copy()
+    )
+
     # Cap history to keep the output HTML manageable.
     unique_weeks = sorted(df["week_start"].dropna().unique())
     if len(unique_weeks) > 52:
         keep_weeks = set(unique_weeks[-52:])
         df = df[df["week_start"].isin(keep_weeks)].copy()
 
-    df["week_start"] = df["week_start"].dt.strftime("%Y-%m-%d")
+    # Cap history to keep the output HTML manageable.
+    unique_weeks = sorted(df["week_start"].dropna().unique())
+    if len(unique_weeks) > 52:
+        keep_weeks = set(unique_weeks[-52:])
+        df = df[df["week_start"].isin(keep_weeks)].copy()
+
+    # Build a full grid so every division appears at every time step
+    # (missing predictions show as 0 / unknown rather than disappearing).
+    boundary_ids = pd.Series(boundaries[id_col].unique(), dtype=object)
+    all_weeks = pd.Series(sorted(df["week_start"].dropna().unique()))
+    full_index = pd.MultiIndex.from_product([boundary_ids, all_weeks], names=[id_col, "week_start"])
+    df = df.set_index([id_col, "week_start"]).reindex(full_index).reset_index()
+
+    prob_for_scale = pd.to_numeric(df["risk_prob"], errors="coerce")
+    df["risk_prob"] = prob_for_scale.fillna(0.0).clip(0.0, 1.0)
+    df["risk_category"] = df["risk_category"].fillna("unknown")
+
+    df["week_start"] = pd.to_datetime(df["week_start"]).dt.strftime("%Y-%m-%d")
     gdf = _shift_antimeridian_for_leaflet(_simplify_for_web(boundaries)).merge(df, on=id_col, how="left")
 
     center = _dateline_safe_center(gdf)
     m = folium.Map(location=center, zoom_start=6, tiles="CartoDB positron", control_scale=True, world_copy_jump=True)
 
+    # Use robust (quantile) scaling so the map is readable even when
+    # probabilities vary a lot across the full time range.
     prob_series = pd.to_numeric(df.get("risk_prob", pd.Series(dtype=float)), errors="coerce")
     if prob_series.notna().any():
-        vmin = float(max(0.0, prob_series.min()))
-        vmax = float(min(1.0, prob_series.max()))
+        q_low = float(prob_series.quantile(0.02))
+        q_high = float(prob_series.quantile(0.98))
+        vmin = float(max(0.0, q_low))
+        vmax = float(min(1.0, q_high))
         if vmax <= vmin:
             vmin, vmax = 0.0, 1.0
     else:
@@ -152,6 +192,9 @@ def make_timeslider_map(boundaries: gpd.GeoDataFrame, risk_df: pd.DataFrame, id_
         prob = float(row.get("risk_prob", 0.0))
         cat = row.get("risk_category", "unknown")
         fill = colormap(prob)
+        # branca returns #RRGGBBAA; strip alpha for broader Leaflet/CSS compatibility
+        if isinstance(fill, str) and fill.startswith("#") and len(fill) == 9:
+            fill = fill[:7]
 
         tooltip = (
             f"{id_col}: {row[id_col]}"

@@ -168,6 +168,16 @@ def make_timeslider_map(boundaries: gpd.GeoDataFrame, risk_df: pd.DataFrame, id_
     center = _dateline_safe_center(gdf)
     m = folium.Map(location=center, zoom_start=6, tiles="CartoDB positron", control_scale=True, world_copy_jump=True)
 
+    # Always-on outlines so users can hover/click any division even when the
+    # choropleth colors are very light.
+    base_outline = _shift_antimeridian_for_leaflet(_simplify_for_web(boundaries))
+    folium.GeoJson(
+        base_outline[[id_col, "geometry"]].to_json(),
+        name="Division outlines",
+        style_function=lambda _feat: {"color": "#444", "weight": 2, "fillOpacity": 0.0},
+        tooltip=folium.GeoJsonTooltip(fields=[id_col]),
+    ).add_to(m)
+
     # Use robust (quantile) scaling so the map is readable even when
     # probabilities vary a lot across the full time range.
     prob_series = pd.to_numeric(df.get("risk_prob", pd.Series(dtype=float)), errors="coerce")
@@ -210,8 +220,8 @@ def make_timeslider_map(boundaries: gpd.GeoDataFrame, risk_df: pd.DataFrame, id_
             "tooltip": tooltip,
             "popup": tooltip,
             "style": {
-                "color": "black",
-                "weight": 1,
+                "color": "#111",
+                "weight": 2,
                 "fillColor": fill,
                 "fillOpacity": 0.65,
             },

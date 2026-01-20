@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import numpy as np
 import folium
 import geopandas as gpd
 import pandas as pd
 from branca.colormap import linear
+from branca.element import MacroElement, Template
 from folium.plugins import TimestampedGeoJson
 from shapely.ops import transform
 
@@ -171,12 +173,12 @@ def make_timeslider_map(boundaries: gpd.GeoDataFrame, risk_df: pd.DataFrame, id_
     # Always-on outlines so users can hover/click any division even when the
     # choropleth colors are very light.
     base_outline = _shift_antimeridian_for_leaflet(_simplify_for_web(boundaries))
-    folium.GeoJson(
+    outline_layer = folium.GeoJson(
         base_outline[[id_col, "geometry"]].to_json(),
         name="Division outlines",
         style_function=lambda _feat: {"color": "#444", "weight": 2, "fillOpacity": 0.0},
-        tooltip=folium.GeoJsonTooltip(fields=[id_col]),
-    ).add_to(m)
+    )
+    outline_layer.add_to(m)
 
     # Use robust (quantile) scaling so the map is readable even when
     # probabilities vary a lot across the full time range.
@@ -239,6 +241,94 @@ def make_timeslider_map(boundaries: gpd.GeoDataFrame, risk_df: pd.DataFrame, id_
         date_options="YYYY-MM-DD",
         time_slider_drag_update=True,
     ).add_to(m)
+
+    # Build a lookup so hovering outlines can show the CURRENT slider date's values.
+    # Structure: riskLookup["YYYY-MM-DD"][division_id] = [risk_prob, risk_category]
+    risk_lookup: dict[str, dict[str, list[object]]] = {}
+    for wk, grp in df.groupby("week_start"):
+        wk_key = str(wk)
+        wk_map: dict[str, list[object]] = {}
+        for row in grp.itertuples(index=False):
+            div = str(getattr(row, id_col))
+            prob = float(getattr(row, "risk_prob"))
+            cat = str(getattr(row, "risk_category"))
+            wk_map[div] = [prob, cat]
+        risk_lookup[wk_key] = wk_map
+
+    map_name = m.get_name()
+    outline_name = outline_layer.get_name()
+    lookup_json = json.dumps(risk_lookup, separators=(",", ":"))
+
+    macro = MacroElement()
+    macro._template = Template(
+        f"""
+{{% macro script(this, kwargs) %}}
+(function() {{
+    var map = {map_name};
+    var outlines = {outline_name};
+    var riskLookup = {lookup_json};
+
+    function toDateKey(t) {{
+        if (t === null || t === undefined) return null;
+        var d = new Date(t);
+        if (isNaN(d)) return null;
+        return d.toISOString().slice(0, 10);
+    }}
+
+    function getCurrentDateKey() {{
+        try {{
+            if (map.timeDimension && map.timeDimension.getCurrentTime) {{
+                return toDateKey(map.timeDimension.getCurrentTime());
+            }}
+        }} catch (e) {{}}
+        return null;
+    }}
+
+    function fmtProb(p) {{
+        if (p === null || p === undefined) return 'NA';
+        var x = Number(p);
+        if (!isFinite(x)) return 'NA';
+        return x.toFixed(3);
+    }}
+
+    function makeHtml(divId) {{
+        var dateKey = getCurrentDateKey();
+        var info = (dateKey && riskLookup[dateKey]) ? riskLookup[dateKey][divId] : null;
+        var prob = info ? info[0] : null;
+        var cat = info ? info[1] : 'unknown';
+        return (
+            '<b>{id_col}:</b> ' + divId +
+            '<br><b>week_start:</b> ' + (dateKey || 'unknown') +
+            '<br><b>risk_prob:</b> ' + fmtProb(prob) +
+            '<br><b>risk_category:</b> ' + cat
+        );
+    }}
+
+    // Bind dynamic tooltips/popups to outline polygons.
+    outlines.eachLayer(function(layer) {{
+        layer.on('mouseover', function(e) {{
+            var props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {{}};
+            var divId = props['{id_col}'];
+            var html = makeHtml(divId);
+            layer.bindTooltip(html, {{sticky: true, direction: 'auto', opacity: 0.95}});
+            layer.openTooltip(e.latlng);
+        }});
+        layer.on('mouseout', function() {{
+            try {{ layer.closeTooltip(); }} catch (e) {{}}
+        }});
+        layer.on('click', function(e) {{
+            var props = (layer.feature && layer.feature.properties) ? layer.feature.properties : {{}};
+            var divId = props['{id_col}'];
+            var html = makeHtml(divId);
+            layer.bindPopup(html);
+            layer.openPopup(e.latlng);
+        }});
+    }});
+}})();
+{{% endmacro %}}
+"""
+    )
+    m.get_root().add_child(macro)
 
     output_html.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(output_html))

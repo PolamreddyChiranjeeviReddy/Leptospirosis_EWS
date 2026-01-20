@@ -1,0 +1,34 @@
+.venv/
+__pycache__/
+*.pyc
+.outputs/
+outputs/
+.DS_Store
+.ipynb_checkpoints/
+*.log
+data/real/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.python-version
+
+# IDE
+.vscode/
+
+# Local caches / derived datasets
+data/**/_chirps_cache/
+data/**/_cache/
+data/**/cache/
+
+# Large geospatial rasters (keep scripts; re-download rasters as needed)
+data/**/*.tif
+data/**/*.tiff
+data/**/*.tfw
+
+# Model artifacts (reproducible via pipeline)
+outputs/**

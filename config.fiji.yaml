@@ -1,0 +1,41 @@
+# Fiji run config (division-week)
+# Uses open dataset from leptospirosis_Fiji_2023-main/data/weeklyCaseDate.csv
+# Notes:
+# - Includes ADM1 (division) boundaries so map outputs are generated.
+
+boundaries_path: data/fiji/fiji_adm1_divisions.gpkg
+boundaries_id_col: division_id
+
+cases_csv: data/fiji/cases.csv
+climate_csv: data/fiji/climate.csv
+sanitation_csv: data/fiji/sanitation.csv
+
+flood_weekly_csv: data/fiji/flood_weekly.csv
+flood_raster_dir: null
+
+prediction_horizon_weeks: 1
+lags_weeks: [1, 2, 3]
+
+labeling:
+  method: quantile
+  quantile: 0.75
+  time_aware: true
+  window_weeks: 52
+  min_periods: 12
+
+training:
+  early_stopping_rounds: 50
+  tuning:
+    enabled: true
+    n_trials: 20
+    validation_weeks: 12
+    metric: pr_auc
+  calibration:
+    method: sigmoid
+
+thresholds:
+  low: 0.4
+  high: 0.7
+  consecutive_weeks: 2
+
+output_dir: outputs/fiji_run

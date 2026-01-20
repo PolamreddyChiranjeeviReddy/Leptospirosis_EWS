@@ -1,0 +1,43 @@
+# Ready-to-run sample config (uses data/sample/*)
+boundaries_path: data/sample/wards.gpkg
+boundaries_id_col: ward_id
+
+cases_csv: data/sample/cases.csv
+climate_csv: data/sample/climate.csv
+sanitation_csv: data/sample/sanitation.csv
+
+# flood inputs (choose ONE)
+flood_weekly_csv: data/sample/flood_weekly.csv
+
+prediction_horizon_weeks: 1
+lags_weeks: [1, 2, 3]
+
+labeling:
+  method: quantile
+  quantile: 0.75
+
+model:
+  xgb:
+    n_estimators: 500
+    max_depth: 5
+    learning_rate: 0.05
+    subsample: 0.9
+    colsample_bytree: 0.9
+
+# Aim for best predictive performance
+training:
+  early_stopping_rounds: 50
+  tuning:
+    enabled: true
+    n_trials: 20
+    validation_weeks: 8
+    metric: pr_auc
+  calibration:
+    method: sigmoid
+
+thresholds:
+  low: 0.4
+  high: 0.7
+  consecutive_weeks: 2
+
+output_dir: outputs/sample_run

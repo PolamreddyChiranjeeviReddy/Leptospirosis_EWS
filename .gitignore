@@ -1,8 +1,8 @@
 .venv/
 __pycache__/
 *.pyc
-.outputs/
-outputs/
+/.outputs/
+/outputs/
 .DS_Store
 .ipynb_checkpoints/
 *.log
@@ -43,4 +43,4 @@ data/**/*.tiff
 data/**/*.tfw
 
 # Model artifacts (reproducible via pipeline)
-outputs/**
+/outputs/**

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leptospirosis EWS – Demo Site</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 2rem; max-width: 900px; }
+    code { background: #f3f3f3; padding: 0.1rem 0.25rem; border-radius: 4px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    a { text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <h1>Leptospirosis EWS – Live Demo</h1>
+  <p>This site hosts the precomputed showcase outputs for the Fiji run (<code>fiji_run_h3</code>).</p>
+
+  <div class="card">
+    <h2>Open the main report</h2>
+    <ul>
+      <li><a href="outputs/fiji_run_h3/report/results_report.html">Results report (HTML)</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Interactive maps</h2>
+    <ul>
+      <li><a href="outputs/fiji_run_h3/risk_latest_map.html">Latest risk map</a></li>
+      <li><a href="outputs/fiji_run_h3/risk_timeslider_map.html">Risk time-slider map</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Artifacts / downloads</h2>
+    <ul>
+      <li><a href="outputs/fiji_run_h3/risk_predictions.geojson">risk_predictions.geojson</a></li>
+      <li><a href="outputs/fiji_run_h3/rolling_metrics.csv">rolling_metrics.csv</a></li>
+      <li><a href="outputs/fiji_run_h3/tuning_trials.csv">tuning_trials.csv</a></li>
+      <li><a href="outputs/fiji_run_h3/run_metadata.json">run_metadata.json</a></li>
+      <li><a href="outputs/fiji_run_h3/run_metadata.sha256">run_metadata.sha256</a></li>
+      <li><a href="outputs/fiji_run_h3/predictions.parquet">predictions.parquet</a> (download)</li>
+      <li><a href="outputs/fiji_run_h3/predictions_thresholded.parquet">predictions_thresholded.parquet</a> (download)</li>
+      <li><a href="outputs/fiji_run_h3/ward_week_features.parquet">ward_week_features.parquet</a> (download)</li>
+      <li><a href="outputs/fiji_run_h3/shap/">shap/</a> (folder)</li>
+    </ul>
+  </div>
+
+  <p style="opacity: 0.75">If a link 404s, wait ~1–2 minutes for GitHub Pages to finish deploying.</p>
+</body>
+</html>

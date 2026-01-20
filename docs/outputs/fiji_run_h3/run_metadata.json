@@ -1,0 +1,278 @@
+{
+  "config": {
+    "boundaries_id_col": "division_id",
+    "boundaries_path": "data\\fiji\\fiji_adm1_divisions.gpkg",
+    "cases_csv": "data\\fiji\\cases.csv",
+    "climate_csv": "data\\fiji\\climate.csv",
+    "features": {
+      "rain_anomaly": {
+        "min_periods": 12,
+        "time_aware": true,
+        "window_weeks": 52
+      }
+    },
+    "flood_raster_dir": null,
+    "flood_weekly_csv": "data\\fiji\\flood_weekly.csv",
+    "labeling": {
+      "k_std": 1.0,
+      "method": "quantile",
+      "min_periods": 12,
+      "quantile": 0.75,
+      "time_aware": true,
+      "window_weeks": 52
+    },
+    "lags_weeks": [
+      1,
+      2,
+      3
+    ],
+    "model": {
+      "xgb": {
+        "colsample_bytree": 0.9,
+        "gamma": 0.0,
+        "learning_rate": 0.05,
+        "max_depth": 5,
+        "min_child_weight": 1.0,
+        "n_estimators": 500,
+        "random_state": 42,
+        "reg_alpha": 0.0,
+        "reg_lambda": 1.0,
+        "subsample": 0.9,
+        "tree_method": "hist"
+      }
+    },
+    "output_dir": "outputs\\fiji_run_h3",
+    "prediction_horizon_weeks": 3,
+    "sanitation_csv": "data\\fiji\\sanitation.csv",
+    "thresholds": {
+      "consecutive_weeks": 2,
+      "high": 0.7,
+      "low": 0.4
+    },
+    "training": {
+      "calibration": {
+        "method": "sigmoid"
+      },
+      "early_stopping_rounds": 50,
+      "tuning": {
+        "enabled": true,
+        "metric": "pr_auc",
+        "n_trials": 20,
+        "random_state": 42,
+        "validation_weeks": 12
+      }
+    }
+  },
+  "created_at_utc": "2026-01-18T04:21:23.217163+00:00",
+  "git": null,
+  "inputs": {
+    "boundaries_path": {
+      "exists": true,
+      "mtime_utc": "2025-12-30T05:25:46.798288+00:00",
+      "path": "data\\fiji\\fiji_adm1_divisions.gpkg",
+      "sha256": "d330729f25a903cea93ea4e14741b3daa7733fa6b73df1fb26e291ffa20a792d",
+      "size_bytes": 7516160
+    },
+    "cases_csv": {
+      "exists": true,
+      "mtime_utc": "2025-12-27T14:25:51.443625+00:00",
+      "path": "data\\fiji\\cases.csv",
+      "sha256": "8c679274edb5ca03c41a82c2bbc27732808fa63159c5ca1a84fbb4c5876491b5",
+      "size_bytes": 41847
+    },
+    "climate_csv": {
+      "exists": true,
+      "mtime_utc": "2025-12-31T17:20:11.505655+00:00",
+      "path": "data\\fiji\\climate.csv",
+      "sha256": "4e1e0e768cf81cc4f0053db83ab3995641d1c4c69b0fde705b26b98508f98e02",
+      "size_bytes": 161130
+    },
+    "flood_weekly_csv": {
+      "exists": true,
+      "mtime_utc": "2025-12-31T19:12:37.809961+00:00",
+      "path": "data\\fiji\\flood_weekly.csv",
+      "sha256": "cb91ecc7cab4418b79821a92fcd17e65d0a77493d8da81fe1648a2295530ebb0",
+      "size_bytes": 28993
+    },
+    "sanitation_csv": {
+      "exists": true,
+      "mtime_utc": "2026-01-02T09:17:01.319506+00:00",
+      "path": "data\\fiji\\sanitation.csv",
+      "sha256": "92419ac3ff3529883d2486dccb84d7533705d26f741fa994a6fd924969b7faea",
+      "size_bytes": 198
+    }
+  },
+  "outputs_manifest": {
+    "created_at_utc": "2026-01-20T05:28:52.137438+00:00",
+    "files": [
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:21.591106+00:00",
+        "path": "outputs\\fiji_run_h3\\predictions.parquet",
+        "sha256": "de65cdb3fe4784218b3bd4ff2826d4d3281aa84043bcf0ccdeb50866e13e38e2",
+        "size_bytes": 64802
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:21.886939+00:00",
+        "path": "outputs\\fiji_run_h3\\predictions_thresholded.parquet",
+        "sha256": "9898fec7bcc848b59bccf8893a1dfb8f2a8c57e93c6944b630035016ab098252",
+        "size_bytes": 67382
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:49.029433+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\calibration_curve.png",
+        "sha256": "bcbaf1e1fd5098b391c066c0b169ae7468e7ad63eb1aef962856acfa9a8875c0",
+        "size_bytes": 79143
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:44.903736+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\predictions.csv",
+        "sha256": "1eb3179197ddd079b380a97bdbdc692598a418e45f1884a369f48a038b4cf973",
+        "size_bytes": 226091
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:45.019828+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\predictions_latest_week.csv",
+        "sha256": "9b0ac6b1da1614dc3983d3a65fe3899ddf07d303832ca016b9628dcd3bd38063",
+        "size_bytes": 178
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:44.958010+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\predictions_thresholded.csv",
+        "sha256": "6072a38e36d68c3f7673fc0336c284e81976c382b5087a54f67ba9953ae0b178",
+        "size_bytes": 276399
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:45.047273+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\predictions_thresholded_latest_week.csv",
+        "sha256": "b4abd38a5eca9b4d3602a7f8c3696966618bd26eac3a9cfaa150a69d2768dc62",
+        "size_bytes": 234
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:51.717966+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\results_report.html",
+        "sha256": "759c009b1e77c598e0c1a15cbee81537e0a2745c5a2623f45eac1691eb113535",
+        "size_bytes": 98170
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:50.867557+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\risk_category_counts.png",
+        "sha256": "f5cb8450f8565bbccd2b9bda1aff37f2c16e768acf8d834c4c45dd7b89cafde1",
+        "size_bytes": 43100
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:50.346143+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\risk_prob_hist.png",
+        "sha256": "f78faead2853d10663549e0682f92b5227ca4f195acf4e0d66d393e87484f8b2",
+        "size_bytes": 34788
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:49.795291+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\rolling_performance.png",
+        "sha256": "09d50a39454ad69ea283a8e56964a70a76fbdb59b4c08773e60aada75cee1159",
+        "size_bytes": 302713
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:28:51.518809+00:00",
+        "path": "outputs\\fiji_run_h3\\report\\top_shap_features.png",
+        "sha256": "6acc6a87c1a179f593b4a2061b7f3562e097019cb8ea8c2ef363d3f741e39527",
+        "size_bytes": 65960
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:20:46.849760+00:00",
+        "path": "outputs\\fiji_run_h3\\risk_latest_map.html",
+        "sha256": "2ee244a5bc0679e6befcec06c6c588c5408aeeeaab0dd7a9974189a3f519493e",
+        "size_bytes": 759402
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:29.391555+00:00",
+        "path": "outputs\\fiji_run_h3\\risk_predictions.geojson",
+        "sha256": "362203fefc21c1dcb74813c15a4bb16aa845870d8ba928131bcf7e91c78836c0",
+        "size_bytes": 14166283
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-20T05:21:03.870539+00:00",
+        "path": "outputs\\fiji_run_h3\\risk_timeslider_map.html",
+        "sha256": "cef8116062452b042e8479b2a29f19de8ac7c1ae2061f777ccdab06b91e1fc98",
+        "size_bytes": 28547770
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:21.633069+00:00",
+        "path": "outputs\\fiji_run_h3\\rolling_metrics.csv",
+        "sha256": "bd3622cba158a946e4d371d5771b7f7a4139fdee9dc69ff6e006808dd4a14635",
+        "size_bytes": 37446
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:26.564523+00:00",
+        "path": "outputs\\fiji_run_h3\\shap\\xgb_shap_importance.png",
+        "sha256": "118f033e34b1ea5b3e4ee1b87f1a265f7bc5d5d872cd9b2bf9a6ab8783b366e9",
+        "size_bytes": 121753
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:26.276221+00:00",
+        "path": "outputs\\fiji_run_h3\\shap\\xgb_shap_summary.png",
+        "sha256": "0e798f9be1aa3c58dcd269920e8c5f5f6880dfe9711cb7f7d3460be8a8284b44",
+        "size_bytes": 298410
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:23.497255+00:00",
+        "path": "outputs\\fiji_run_h3\\shap\\xgb_shap_values.parquet",
+        "sha256": "f446aa0f1d487fd94c43c1ceb3d2fb76db440762f63cbe3a9d7f454803e89231",
+        "size_bytes": 140722
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T05:36:21.809980+00:00",
+        "path": "outputs\\fiji_run_h3\\tuning_trials.csv",
+        "sha256": "21c3f70d9ed404b99c35fb6af643f06e06208975f26f600731be787df409751b",
+        "size_bytes": 1878225
+      },
+      {
+        "exists": true,
+        "mtime_utc": "2026-01-18T04:21:24.384178+00:00",
+        "path": "outputs\\fiji_run_h3\\ward_week_features.parquet",
+        "sha256": "e9cf4f373ea2f3f41ef500a05f6961d14157d959978f2a475d753b00377e786c",
+        "size_bytes": 45717
+      }
+    ]
+  },
+  "packages": {
+    "folium": "0.20.0",
+    "geopandas": "1.1.1",
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "pydantic": "2.12.5",
+    "scikit-learn": "1.8.0",
+    "shap": "0.50.0",
+    "typer": "0.20.1",
+    "xgboost": "3.1.2"
+  },
+  "platform": {
+    "machine": "AMD64",
+    "release": "11",
+    "system": "Windows",
+    "version": "10.0.26100"
+  },
+  "python": {
+    "executable": "D:\\Major Project Leptospirosis EWS\\My_Project_Orginal\\.venv\\Scripts\\python.exe",
+    "version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]"
+  }
+}

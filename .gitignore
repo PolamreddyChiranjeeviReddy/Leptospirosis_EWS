@@ -17,13 +17,25 @@ coverage.xml
 htmlcov/
 .python-version
 
+# Packaging/build artifacts
+build/
+dist/
+*.egg-info/
+
 # IDE
 .vscode/
+
+# Local helper tools (do not commit)
+.tools/
 
 # Local caches / derived datasets
 data/**/_chirps_cache/
 data/**/_cache/
 data/**/cache/
+
+# Derived intermediate tables/maps
+data/**/*.parquet
+data/**/risk_predictions.geojson
 
 # Large geospatial rasters (keep scripts; re-download rasters as needed)
 data/**/*.tif

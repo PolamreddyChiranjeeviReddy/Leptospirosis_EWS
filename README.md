@@ -1,10 +1,5 @@
 # Leptospirosis Ward-Level Early Warning System (EWS)
 
-This folder contains **your original project implementation** built by referencing the provided repos:
-- Argentina EWS (two-stage / rolling prediction + outbreak detection): `../lepto-argentina-main/`
-- Fiji climate lagged models (weekly/monthly lags): `../leptospirosis_Fiji_2023-main/`
-- Kelantan RF input structure (optimized hydro-meteorological indices): `../Kelantan_leptospirosis_modelling-main/`
-- Meteorology/runoff lag studies: `../meteorology_leptospirosis-main/`
 
 Goal: predict ward/village **risk probability** 1–3 weeks ahead using climate + flood + sanitation signals, then produce **risk categories** and **GIS maps**, with **SHAP** explanations.
 
